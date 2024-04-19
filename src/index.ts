@@ -14,7 +14,7 @@ import { ToDoEntity } from './shared/entities';
 
 dotenv.config();
 
-const DependencyInjection = {} as {
+export const DependencyInjection = {} as {
   server: http.Server;
   orm: MikroORM;
   em: EntityManager;
