@@ -1,19 +1,43 @@
+import 'reflect-metadata';
 import express from 'express';
 import http from 'http';
+import {
+  EntityManager,
+  EntityRepository,
+  MikroORM,
+  RequestContext,
+} from '@mikro-orm/mongodb';
 import * as dotenv from 'dotenv';
+
+import config, { Config } from './config';
+import { ToDoEntity } from './shared/entities';
 
 dotenv.config();
 
-// Middleware
+const DependencyInjection = {} as {
+  server: http.Server;
+  orm: MikroORM;
+  em: EntityManager;
+  todos: EntityRepository<ToDoEntity>;
+};
+
 const app = express();
-app.use(express.json());
+const { server: serverConfig }: Config = config(process.env);
 
-const port = process.env.PORT ?? '3000';
+const port = serverConfig.port ?? '3000';
 
-const server = http.createServer(app);
+export const init = (async () => {
+  DependencyInjection.orm = await MikroORM.init();
+  DependencyInjection.em = DependencyInjection.orm.em;
+  DependencyInjection.todos =
+    DependencyInjection.orm.em.getRepository(ToDoEntity);
 
-server.listen(port, () => {
-  console.log(`Server is running on port ${port}\n`);
-});
+  app.use(express.json());
+  app.use((req, res, next) =>
+    RequestContext.create(DependencyInjection.orm.em, next)
+  );
 
-module.exports = app;
+  DependencyInjection.server = app.listen(port, () => {
+    console.log(`Application running on: http://localhost:${port}`);
+  });
+})();
