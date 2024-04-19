@@ -1,13 +1,11 @@
 import { Entity, Property } from '@mikro-orm/core';
-import BaseEntity from './base-entity';
+import { BaseEntity } from './base-entity';
 
 @Entity()
-class ToDoEntity extends BaseEntity {
+export class ToDoEntity extends BaseEntity {
   @Property()
   text!: string;
 
   @Property()
   done!: boolean;
 }
-
-export default ToDoEntity;
