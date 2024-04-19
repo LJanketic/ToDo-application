@@ -5,7 +5,7 @@ export interface DbConfig {
   dbName: string;
   user: string;
   password: string;
-  type: 'postgresql';
+  port: number;
 }
 
 const schema = joi
@@ -14,15 +14,16 @@ const schema = joi
     dbName: joi.string().required(),
     user: joi.string().required(),
     password: joi.string().allow(''),
+    port: joi.number().required(),
   })
   .unknown();
 
 const createConfig = (env: any): DbConfig => ({
-  host: env.DATABASE_HOST,
-  dbName: env.DATABASE_NAME,
-  user: env.DATABASE_USER,
-  password: env.DATABASE_PASSWORD,
-  type: 'postgresql',
+  host: env.DB_HOST,
+  dbName: env.DB_NAME,
+  user: env.DB_USER,
+  password: env.DB_PASSWORD,
+  port: env.DB_PORT,
 });
 
 export default (env: any): DbConfig => {
