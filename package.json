@@ -13,6 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "@mikro-orm/core": "^6.2.1",
+    "@mikro-orm/mongo-highlighter": "^1.0.0",
+    "@mikro-orm/mongodb": "^6.2.1",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^7.7.0",
     "cors": "^2.8.5",
