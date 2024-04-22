@@ -11,6 +11,7 @@ import * as dotenv from 'dotenv';
 
 import config, { Config } from './config';
 import { ToDoEntity } from './shared/entities';
+import todoRoutes from './routes/todo-routes';
 
 dotenv.config();
 
@@ -32,10 +33,17 @@ export const init = (async () => {
   DependencyInjection.todos =
     DependencyInjection.orm.em.getRepository(ToDoEntity);
 
+  app.use((req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    next();
+  });
+
   app.use(express.json());
   app.use((req, res, next) =>
     RequestContext.create(DependencyInjection.orm.em, next)
   );
+
+  app.use('/api', todoRoutes);
 
   DependencyInjection.server = app.listen(port, () => {
     console.log(`Application running on: http://localhost:${port}`);
