@@ -49,21 +49,17 @@ const ToDoController = {
 
   async createOne(req: Request, res: Response): Promise<void> {
     try {
-      const { text, done } = req.body;
+      const { text } = req.body;
 
       if (!text) {
         res.status(400).json({ message: 'Text field is mandatory!' });
         return;
       }
 
-      const createdToDo = new ToDoEntity(text, done);
+      const createdToDo = new ToDoEntity(text);
       await DependencyInjection.em.persistAndFlush(createdToDo);
 
       res.status(201).json(createdToDo);
-
-      if (done) {
-        await sendSMS(text);
-      }
     } catch (error) {
       console.error('Error creating ToDo:', error);
       res.status(500).json({ message: 'Internal Server Error' });
