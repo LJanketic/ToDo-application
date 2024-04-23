@@ -2,6 +2,7 @@
 # ToDo Application
 
 This is the server repository of the ToDo app.
+Postman collection can be found in project files.
 
 ## Secrets
 
