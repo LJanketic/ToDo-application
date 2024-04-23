@@ -88,6 +88,24 @@ const ToDoController = {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   },
+  async deleteOne(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const fetchedTodo = await DependencyInjection.todos.findOne(id);
+
+      if (!fetchedTodo) {
+        res.status(404).json({ message: 'ToDo not found' });
+        return;
+      }
+
+      await DependencyInjection.em.removeAndFlush(fetchedTodo);
+
+      res.status(204).end();
+    } catch (error) {
+      console.error('Error deleting ToDo:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
 };
 
 export default ToDoController;
