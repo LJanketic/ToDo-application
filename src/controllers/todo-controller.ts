@@ -3,10 +3,25 @@ import { wrap } from '@mikro-orm/mongodb';
 import { DependencyInjection } from '..';
 import { ToDoEntity } from '../shared/entities';
 
+function mapSortOrder(sort: string): 'ASC' | 'DESC' {
+  if (!sort) return 'DESC';
+
+  const sortValue = sort.toUpperCase();
+  if (sortValue === 'ASC' || sortValue === 'DESC') {
+    return sortValue as 'ASC' | 'DESC';
+  }
+
+  return 'DESC';
+}
+
 const ToDoController = {
   async getAll(req: Request, res: Response): Promise<void> {
     try {
-      const fetchedTodos = await DependencyInjection.todos.findAll();
+      const { sort } = req.query;
+      const sortOrder = mapSortOrder(sort as string);
+      const fetchedTodos = await DependencyInjection.todos.findAll({
+        orderBy: { createdAt: sortOrder as 'ASC' | 'DESC' },
+      });
 
       res.status(200).json(fetchedTodos);
     } catch (error) {
