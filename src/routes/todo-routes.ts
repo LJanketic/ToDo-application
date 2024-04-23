@@ -3,9 +3,9 @@ import ToDoController from '../controllers/todo-controller';
 
 const router = express.Router();
 
-router.get('/todos', ToDoController);
-router.get('/todos/:id', ToDoController);
-router.post('/todos', ToDoController);
-router.patch('/todos/:id', ToDoController);
+router.get('/todos', ToDoController.getAll);
+router.get('/todos/:id', ToDoController.getOneById);
+router.post('/todos', ToDoController.createOne);
+router.patch('/todos/:id', ToDoController.updateOne);
 
 export default router;
