@@ -7,6 +7,7 @@ import {
   MikroORM,
   RequestContext,
 } from '@mikro-orm/mongodb';
+import cors from 'cors';
 import * as dotenv from 'dotenv';
 
 import config, { Config } from './config';
@@ -27,16 +28,18 @@ const { server: serverConfig }: Config = config(process.env);
 
 const port = serverConfig.port ?? '3000';
 
+const corsOptions = {
+  origin: serverConfig.frontendURI ?? 'http://localhost:3000',
+  optionSuccessStatus: 200,
+};
+
 export const init = (async () => {
   DependencyInjection.orm = await MikroORM.init();
   DependencyInjection.em = DependencyInjection.orm.em;
   DependencyInjection.todos =
     DependencyInjection.orm.em.getRepository(ToDoEntity);
 
-  app.use((req, res, next) => {
-    res.setHeader('Content-Type', 'application/json');
-    next();
-  });
+  app.use(cors(corsOptions));
 
   app.use(express.json());
   app.use((req, res, next) =>
