@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { DependencyInjection } from '..';
 import { ToDoEntity } from '../shared/entities';
+import sendSMS from './sms-controller';
 
 function mapSortOrder(sort: string): 'ASC' | 'DESC' {
   if (!sort) return 'DESC';
@@ -81,6 +82,10 @@ const ToDoController = {
       fetchedTodo.done = done ?? fetchedTodo.done;
 
       await DependencyInjection.em.flush();
+
+      if (done) {
+        await sendSMS(text);
+      }
 
       res.status(200).json(fetchedTodo);
     } catch (error) {
