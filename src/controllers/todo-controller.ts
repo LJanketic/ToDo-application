@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { wrap } from '@mikro-orm/mongodb';
 import { DependencyInjection } from '..';
 import { ToDoEntity } from '../shared/entities';
 
@@ -78,7 +77,9 @@ const ToDoController = {
         return;
       }
 
-      wrap(fetchedTodo).assign({ text, done });
+      fetchedTodo.text = text ?? fetchedTodo.text;
+      fetchedTodo.done = done ?? fetchedTodo.done;
+
       await DependencyInjection.em.flush();
 
       res.status(200).json(fetchedTodo);
