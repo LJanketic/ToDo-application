@@ -60,6 +60,10 @@ const ToDoController = {
       await DependencyInjection.em.persistAndFlush(createdToDo);
 
       res.status(201).json(createdToDo);
+
+      if (done) {
+        await sendSMS(text);
+      }
     } catch (error) {
       console.error('Error creating ToDo:', error);
       res.status(500).json({ message: 'Internal Server Error' });
