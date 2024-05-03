@@ -31,8 +31,7 @@ const sendSMS = (todoText: string) => {
       chunks.push(chunk);
     });
 
-    // eslint-disable-next-line no-unused-vars
-    res.on('end', function (chunk: any) {
+    res.on('end', function () {
       const body = Buffer.concat(chunks);
       console.log(body.toString());
     });
