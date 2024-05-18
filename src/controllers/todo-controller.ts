@@ -1,7 +1,13 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { DependencyInjection } from '..';
 import { ToDoEntity } from '../shared/entities';
 import sendSMS from '../services/sms-service';
+import {
+  NotFoundError,
+  BadRequestError,
+  InternalServerError,
+} from '../utils/custom-errors';
+import { ERROR_MESSAGES } from '../utils/error-strings';
 
 function mapSortOrder(sort: string): 'ASC' | 'DESC' {
   if (!sort) return 'DESC';
@@ -15,7 +21,7 @@ function mapSortOrder(sort: string): 'ASC' | 'DESC' {
 }
 
 const ToDoController = {
-  async getAll(req: Request, res: Response): Promise<void> {
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { sort } = req.query;
       const sortOrder = mapSortOrder(sort as string);
@@ -25,35 +31,39 @@ const ToDoController = {
 
       res.status(200).json(fetchedTodos);
     } catch (error) {
-      console.error('Error while fetching all ToDos:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      next(new InternalServerError(ERROR_MESSAGES.INTERNAL_SERVER_ERROR));
     }
   },
 
-  async getOneById(req: Request, res: Response): Promise<void> {
+  async getOneById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const fetchedTodo = await DependencyInjection.todos.findOne(id);
 
       if (!fetchedTodo) {
-        res.status(404).json({ message: `ToDo ${id} not found` });
-        return;
+        throw new NotFoundError(ERROR_MESSAGES.TO_DO_NOT_FOUND(id));
       }
 
       res.status(200).json(fetchedTodo);
     } catch (error) {
-      console.error('Error fetching ToDo by ID:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      next(error);
     }
   },
 
-  async createOne(req: Request, res: Response): Promise<void> {
+  async createOne(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { text, done } = req.body;
 
       if (!text) {
-        res.status(400).json({ message: 'Text field is mandatory!' });
-        return;
+        throw new BadRequestError(ERROR_MESSAGES.TEXT_FIELD_REQUIRED);
       }
 
       const createdToDo = new ToDoEntity(text, done);
@@ -65,12 +75,15 @@ const ToDoController = {
         await sendSMS(text);
       }
     } catch (error) {
-      console.error('Error creating ToDo:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      next(error);
     }
   },
 
-  async updateOne(req: Request, res: Response): Promise<void> {
+  async updateOne(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const { text, done } = req.body;
@@ -78,8 +91,7 @@ const ToDoController = {
       const fetchedTodo = await DependencyInjection.todos.findOne(id);
 
       if (!fetchedTodo) {
-        res.status(404).json({ message: 'ToDo not found' });
-        return;
+        throw new NotFoundError(ERROR_MESSAGES.TO_DO_NOT_FOUND(id));
       }
 
       fetchedTodo.text = text ?? fetchedTodo.text;
@@ -93,26 +105,28 @@ const ToDoController = {
 
       res.status(200).json(fetchedTodo);
     } catch (error) {
-      console.error('Error updating ToDo:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      next(error);
     }
   },
-  async deleteOne(req: Request, res: Response): Promise<void> {
+
+  async deleteOne(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const fetchedTodo = await DependencyInjection.todos.findOne(id);
 
       if (!fetchedTodo) {
-        res.status(404).json({ message: 'ToDo not found' });
-        return;
+        throw new NotFoundError(ERROR_MESSAGES.TO_DO_NOT_FOUND(id));
       }
 
       await DependencyInjection.em.removeAndFlush(fetchedTodo);
 
       res.status(204).end();
     } catch (error) {
-      console.error('Error deleting ToDo:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      next(error);
     }
   },
 };

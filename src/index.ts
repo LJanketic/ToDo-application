@@ -13,6 +13,7 @@ import * as dotenv from 'dotenv';
 import config, { Config } from './config';
 import { ToDoEntity } from './shared/entities';
 import todoRoutes from './routes/todo-routes';
+import { ErrorHandler } from './config/error-handler';
 
 dotenv.config();
 
@@ -47,6 +48,8 @@ export const init = (async () => {
   );
 
   app.use('/api', todoRoutes);
+
+  app.use(ErrorHandler);
 
   DependencyInjection.server = app.listen(port, () => {
     console.log(`Application running on: http://localhost:${port}`);
