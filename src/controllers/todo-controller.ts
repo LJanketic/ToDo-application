@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { DependencyInjection } from '../config/dependency-injection/dependency-injection';
 import { ToDoEntity } from '../shared/entities';
-import sendSMS from '../services/sms-service';
 import {
   NotFoundError,
   BadRequestError,
@@ -94,10 +93,6 @@ const ToDoController = {
       fetchedTodo.done = done ?? fetchedTodo.done;
 
       await DependencyInjection.em.flush();
-
-      if (done) {
-        sendSMS(text);
-      }
 
       res.status(200).json(fetchedTodo);
     } catch (error) {
