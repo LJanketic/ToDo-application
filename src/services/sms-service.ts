@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 
 import * as followRedirects from 'follow-redirects';
 
-import config, { Config } from '../config';
+import config, { Config } from '../config/validation';
 
 dotenv.config();
 
