@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { DependencyInjection } from '..';
+import { DependencyInjection } from '../config/dependency-injection/dependency-injection';
 import { ToDoEntity } from '../shared/entities';
 import sendSMS from '../services/sms-service';
 import {
