@@ -1,8 +1,11 @@
 
 # ToDo Application
 
-This is the server repository of the ToDo app.
+This is the server repository of a simple Todo application server.
 Postman collection can be found in project files.
+
+## Note: This is the final version of the server which utilizes the sms-service
+In further development, the service is removed along with its config and .env variables
 
 ## Secrets
 
