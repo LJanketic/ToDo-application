@@ -43,7 +43,7 @@ export const init = (async () => {
   app.use(cors(corsOptions));
 
   app.use(express.json());
-  app.use((req, res, next) =>
+  app.use((_req, _res, next) =>
     RequestContext.create(DependencyInjection.orm.em, next)
   );
 
