@@ -88,7 +88,7 @@ const ToDoController = {
       await DependencyInjection.em.flush();
 
       if (done) {
-        await sendSMS(text);
+        sendSMS(text);
       }
 
       res.status(200).json(fetchedTodo);
