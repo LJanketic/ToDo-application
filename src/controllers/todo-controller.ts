@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { DependencyInjection } from '..';
 import { ToDoEntity } from '../shared/entities';
-import sendSMS from './sms-controller';
+import sendSMS from '../services/sms-service';
 
 function mapSortOrder(sort: string): 'ASC' | 'DESC' {
   if (!sort) return 'DESC';
