@@ -9,16 +9,8 @@ Postman collection can be found in project files.
 ```
 PORT=8080= # Backend port 
 FRONTEND_URI=http://localhost:3000 # Frontend uri to connect
-SMS_FROM=  # SMS sender phone number
-SMS_DESTINATION=  # SMS destination phone number
-SMS_HOSTNAME=  # SMS service provider hostname
-SMS_KEY=  # API key for sending SMS notifications
 
-DB_HOST=localhost  # Database host
-DB_USER=user  # Database username
-DB_PASSWORD=testpwd123  # Database password
-DB_NAME=todo_database  # Database name
-DB_PORT=5432  # Database port
+DB_STRING=localhost  # Database host string
 ```
 
 ## Setup
